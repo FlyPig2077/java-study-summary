@@ -1,0 +1,106 @@
+**Q80RemoveDuplicatesFromSortedArrayIi：删除排序数组中的重复项 II**
+
+**ps：**为 26 题的变形
+
+**题目类型：** 数组
+
+**题目难度：** 中等
+
+**题目地址：**https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array-ii/
+
+给定一个增序排列数组 nums ，你需要在 原地 删除重复出现的元素，使得每个元素最多出现两次，返回移除后数组的新长度。
+
+不要使用额外的数组空间，你必须在 原地 修改输入数组 并在使用 O(1) 额外空间的条件下完成。
+
+示例 1：
+```
+输入：nums = [1,1,1,2,2,3]
+输出：5, nums = [1,1,2,2,3]
+解释：函数应返回新长度 length = 5, 并且原数组的前五个元素被修改为 1, 1, 2, 2, 3 。 你不需要考虑数组中超出新长度后面的元素。
+```
+
+示例 2：
+```
+输入：nums = [0,0,1,1,1,1,2,3,3]
+输出：7, nums = [0,0,1,1,2,3,3]
+解释：函数应返回新长度 length = 7, 并且原数组的前五个元素被修改为 0, 0, 1, 1, 2, 3, 3 。 你不需要考虑数组中超出新长度后面的元素。
+```
+
+**思路：**
+
+* 方法一：判断重复次数，删除多余的数，即将后面的数往前移
+* 方法二：使用双指针，i 为遍历到当前的位置，j 为需要进行替换的重复位置
+
+**题解：**
+
+方法一：判断重复次数，删除多余的数，即将后面的数往前移
+
+```java
+// 删除重复元素，并将元素往前移
+public void remElement(int[] nums, int i) {
+    for (int j = i + 1; j < nums.length; j++) {
+        nums[j - 1] = nums[j];
+    }
+}
+
+public int removeDuplicates(int[] nums) {
+    // 方法一：判断重复次数，删除多余的数，即将后面的数往前移
+    int count = 1;
+    int length = nums.length;
+    int i = 1;
+    for (; i < length; i++) {
+        if (nums[i] == nums[i - 1]) {
+            count++;
+        } else {
+            // 重置元素出现次数
+            count = 1;
+        }
+        if (count > 2) {
+            // 调用自定义的删除元素方法
+            remElement(nums,i);
+            length--;
+            i--;
+        }
+    }
+    return i;
+}
+```
+
+方法二：使用双指针，i 为遍历到当前的位置，j 为需要进行替换的重复位置
+
+个人理解：**若重复的数不超过两个，则i、j一直递增，若count > 2时，j则不递增，i继续递增，直到找到可替换的数**
+
+```java
+public int removeDuplicates(int[] nums) {
+    // 方法二：双指针
+    int count = 1;
+    int j = 1;
+    for (int i = 1; i < nums.length; i++) {
+        if (nums[i] == nums[i - 1]) {
+            count++;
+        } else {
+            count = 1;
+        }
+        if (count <= 2) {
+            // 表示重复次数不超过两次，用来替换出现重复的数
+            nums[j++] = nums[i];
+        }
+        // 结论：若重复的数不超过两个，则i、j一直递增，若count > 2时，j则不递增，i继续递增，直到找到可替换的数
+    }
+    return j;
+}
+```
+
+**方法二的简化版：**
+
+```java
+public int removeDuplicates(int[] nums) {
+    // 极简，简化方法二，这里的i就是方法二的j
+    int i = 0;
+    for (int n : nums) {
+        if (i < 2 || n > nums[i - 2]) nums[i++] = n;
+    }
+    return i;
+}
+```
+
